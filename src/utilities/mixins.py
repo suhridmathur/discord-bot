@@ -48,3 +48,32 @@ class AbstractHttpBase(ABC):
         url = f"{self.base_url}{path}"
         response = method(url, data=json.dumps(data), headers=headers)
         return response.status_code, response.json()
+
+
+class AbstractCacheBase(ABC):
+    """
+    Abstract class which help child classes store & retrieve data to & from redis cache.
+    Child classes must declare properties:
+        - cache_prefix: Prefix to be used with all cache keys
+        - cache_timeout: a datetime.timedelta field after which keys should expire
+    """
+
+    @property
+    @abstractmethod
+    def cache_prefix(self):
+        pass
+
+    @property
+    @abstractmethod
+    def cache_timeout(self):
+        pass
+
+    def cache_lookup(self, key):
+        return self.cache.get(f"{self.cache_prefix}_{key}")
+
+    def set_cache(self, key, value):
+        self.cache.setex(f"{self.cache_prefix}_{key}", self.cache_timeout, value)
+
+    def __init__(self, *args, **kwargs):
+        self.cache = redis.Redis()
+        super().__init__(*args, **kwargs)
