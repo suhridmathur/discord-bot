@@ -16,7 +16,7 @@ class Client(discord.Client):
 
         # Send Hello message on greeting from user #
         message_content = message.content
-        if message_content.lower() in constants.GREETING_MESSAGE_LIST:
+        if message_content.lower() in constants.USER_GREETING_MESSAGES:
             await message.channel.send(
                 f"{random.choice(constants.BOT_GREETING_MESSAGES)} {message.author.display_name}"
             )
