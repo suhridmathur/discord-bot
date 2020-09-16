@@ -1,4 +1,6 @@
+import json
 import redis
+import requests
 
 from abc import ABC, abstractmethod
 
@@ -38,7 +40,7 @@ class AbstractHttpBase(ABC):
             "head": requests.head,
         }
 
-    def get_status_and_response(self, method, path, data={}, headers={}):
+    def get_status_and_response(self, path, data={}, headers={}, method="get"):
         method = self.__method_dispatcher.get(method.lower())
         assert method, f"{method} not found"
 
@@ -46,7 +48,7 @@ class AbstractHttpBase(ABC):
             headers = self.header
 
         url = f"{self.base_url}{path}"
-        response = method(url, data=json.dumps(data), headers=headers)
+        response = method(url, data=data, headers=headers)
         return response.status_code, response.json()
 
 
