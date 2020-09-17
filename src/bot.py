@@ -3,7 +3,7 @@ import random
 
 import discord
 
-from utilities import constants, google_search
+from utilities import constants, google_search, storage_service
 
 TOKEN = os.getenv("BOT_TOKEN")
 
@@ -26,7 +26,7 @@ class Client(discord.Client):
         elif message_content.startswith("!google"):
             search_term = " ".join(
                 message_content.split()[1:]
-            )  # `!google leo messi` -> `leo messi`#
+            )  # Gets search term from `!google leo messi` to `leo messi`#
             if not search_term:
                 await message.channel.send(
                     random.choice(constants.NO_TERM_ENTERED_MESSAGES)
@@ -43,6 +43,11 @@ class Client(discord.Client):
                 embeded_response.add_field(
                     name=result["title"], value=result["url"], inline=False
                 )
+            # Persist message into db #
+            storage_service.SearchHistoryService().insert_search_history(
+                message.author.id,
+                search_term
+            )
             await message.channel.send(embed=embeded_response)
 
 
