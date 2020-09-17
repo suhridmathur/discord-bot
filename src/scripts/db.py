@@ -7,6 +7,7 @@ from sqlalchemy import (
     Integer,
     String,
     TIMESTAMP,
+    BigInteger,
 )
 
 DB_URI = os.getenv("BOT_DB_URI")
@@ -17,7 +18,7 @@ search_history = Table(
     "search_history",
     meta,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("user_id", Integer, nullable=False),
+    Column("user_id", BigInteger, nullable=False),
     Column("search_term", String(255), nullable=False),
     Column("timestamp", TIMESTAMP, nullable=False),
 )
