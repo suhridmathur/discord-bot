@@ -45,10 +45,35 @@ class Client(discord.Client):
                 )
             # Persist message into db #
             storage_service.SearchHistoryService().insert_search_history(
-                message.author.id,
-                search_term
+                message.author.id, search_term
             )
             await message.channel.send(embed=embeded_response)
+
+        # Return recent searches if message startswith "!recent" #
+        elif message_content.startswith("!recent"):
+            search_term = " ".join(
+                message_content.split()[1:]
+            )  # Gets search term from `!google leo messi` to `leo messi`#
+            if not search_term:
+                await message.channel.send(
+                    random.choice(constants.NO_TERM_ENTERED_MESSAGES)
+                )
+                return
+            records = (
+                storage_service.SearchHistoryService().get_recent_related_searches(
+                    message.author.id, search_term
+                )
+            )
+            embedded_response = discord.Embed(
+                title=f"{constants.RECENT_SEARCHES_TITLE} '{search_term}'"
+            )
+            for record in records:
+                embedded_response.add_field(
+                    name=record.search_term,
+                    value=f"Searched on {record.timestamp}",
+                    inline=False,
+                )
+            await message.channel.send(embed=embedded_response)
 
 
 client = Client()

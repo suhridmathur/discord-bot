@@ -16,3 +16,15 @@ class SearchHistoryService:
         instance = SearchHistory(user_id, term)
         self.session.add(instance)
         self.session.commit()
+
+    def get_recent_related_searches(self, user_id, term, count=5):
+        records = (
+            self.session.query(SearchHistory)
+            .filter(
+                SearchHistory.search_term.like(f"%{term}%"),
+                SearchHistory.user_id == user_id,
+            )
+            .order_by(SearchHistory.timestamp.desc())
+            .limit(count)
+        )
+        return records
