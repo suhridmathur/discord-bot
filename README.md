@@ -1,6 +1,6 @@
 # Basic Discord Bot
 
-This is bot created using discord's libraries for searching over google & persisting history for lookup.
+This bot is created using discord's libraries for searching over google & persisting history for lookup.
 
 ## Technologies Used:
 
